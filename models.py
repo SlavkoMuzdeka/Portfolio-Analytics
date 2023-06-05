@@ -2,13 +2,16 @@ import os
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, Float, ForeignKey, Integer, String
 
-DATABASE_USER = os.environ["DATABASE_USER"]
-DATABASE_PASS = os.environ["DATABASE_PASS"]
-DATABASE_NAME = os.environ["DATABASE_NAME"]
-DATABASE_HOST = os.environ["DATABASE_HOST"]
-DATABASE_PATH = "postgresql://{}:{}@{}/{}".format(
-    DATABASE_USER, DATABASE_PASS, DATABASE_HOST, DATABASE_NAME
-)
+# DATABASE_USER = os.environ["DATABASE_USER"]
+# DATABASE_PASS = os.environ["DATABASE_PASS"]
+# DATABASE_NAME = os.environ["DATABASE_NAME"]
+# DATABASE_HOST = os.environ["DATABASE_HOST"]
+# DATABASE_PATH = "postgresql://{}:{}@{}/{}".format(
+#     DATABASE_USER, DATABASE_PASS, DATABASE_HOST, DATABASE_NAME
+# )
+DATABASE_PATH = os.environ['DATABASE_URL']
+if DATABASE_PATH.startswith("postgres://"):
+  DATABASE_PATH = DATABASE_PATH.replace("postgres://", "postgresql://", 1)
 
 
 db = SQLAlchemy()
