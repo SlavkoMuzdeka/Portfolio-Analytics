@@ -16,6 +16,7 @@ The project adheres to the PEP 8 style guide and follows common best practices, 
 * Code is commented appropriately.
 * Secrets are stored as environment variables.
 
+
 ### Key Dependencies & Platforms
 
 - [Flask](http://flask.pocoo.org/)  is a lightweight backend microservices framework. Flask is required to handle requests and responses.
@@ -28,7 +29,7 @@ The project adheres to the PEP 8 style guide and follows common best practices, 
 
 - [Auth0](https://auth0.com/docs/) is the authentication and authorization system we'll use to handle users with different roles with more secure and easy ways
 
-- [Heroku](https://www.heroku.com/what) is the cloud platform used for deployment
+- [Render](https://render.com/) is the cloud platform used for deployment
 
 ### Running Locally
 
@@ -49,6 +50,7 @@ pip install -r requirements.txt
 ```
 
 This will install all of the required packages we selected within the `requirements.txt` file.
+
 
 #### Database Setup
 With Postgres running, restore a database using the `capstone.psql` file provided. In terminal run:
@@ -75,9 +77,15 @@ You need to setup an Auth0 account.
 Environment variables needed: (setup.sh)
 
 ```bash
+# UNIX/macOS
 export AUTH0_DOMAIN='<your_auth0_domain>'
 export ALGORITHMS='<your_algorithms>'
 export API_AUDIENCE='<your_api_audience>'
+
+# Windows
+set AUTH0_DOMAIN='<your_auth0_domain>'
+set ALGORITHMS='<your_algorithms>'
+set API_AUDIENCE='<your_api_audience>'
 ```
 
 ##### Roles
@@ -108,7 +116,7 @@ Use the following link to create users and sign them in. This way, you can gener
 https://{{YOUR_DOMAIN}}/authorize?audience={{API_IDENTIFIER}}&response_type=token&client_id={{YOUR_CLIENT_ID}}&redirect_uri={{YOUR_CALLBACK_URI}}
 ```
 
-#### Launching The App
+#### Launching The App (Locally)
 
 1. Initialize and activate a virtualenv:
 
@@ -155,6 +163,48 @@ https://{{YOUR_DOMAIN}}/authorize?audience={{API_IDENTIFIER}}&response_type=toke
     ```bash
     python app.py
     ```
+
+
+#### Deployment to Render Cloud Platform
+
+1. Create a Render Account
+
+2. Set up a Database Service with Postgres:
+    - Once you are logged in, you will be redirected to the Render Dashboard. 
+    - Click the New Postgres button to set up a Postgres cloud database.
+    - On the "New Postgres" page:
+
+        * Provide a name for the new database service: `postgres-deployment-example`
+        * Select an instance type: `Free`
+        * Click `Create Database` button
+
+3. Deploy Apps with Render's Web Service:
+    - Once the database is set up, we can go back to Render Dashboard and create a new `Web Service`.
+    - Connect your Flask app from GitHub or GitLab repo to the Web Service
+    - On the "New Web Service" page:
+
+        * Provide a name for the new database service: `render-deployment-example`
+        * Select an instance type: `Free`
+        * Enter the build command: `pip install -r requirements.txt`
+        * Enter the start command: `gunicorn app:app`
+
+    - Note: Render will install the dependencies from the "requirements.txt" provided in the GitHub repo.
+
+4. Connect the Database Service and Web Service
+    - Before you click `Create Web Service`, you will need to connect the Postgres service so your Flask app can read and write data to the Postgres database. To connect the services, you can copy the Postgres database URL and paste it into the environment variables within the web service
+
+5. Copy Postgres Database URL
+    - From the Postgres service (name: `postgres-deployment-example`), click the `Info` side navigation and copy the `Internal Database URL` from the Connections page.
+
+6. Paste the Database URL in the Web Service Environment Variable: 
+    - From the web service (name: `render-deployment-example`), create an environment variable with the key: `DATABASE_URL` and value: the `<Database URL>` copied from the Postgres service.
+
+7. Set environment variables:
+    - `AUTH0_DOMAIN`: `<your_auth0_domain>`
+    - `API_AUDIENCE`: `<your_api_audience>`
+    - `USER_TOKEN`: `<your_user_token>`
+    - `ADMIN_TOKEN`: `<your_admin_token>`
+
 
 ## API Documentation
 

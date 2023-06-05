@@ -2,6 +2,8 @@ import os
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Column, Float, ForeignKey, Integer, String
 
+### If you are running app locally you will need this
+
 # DATABASE_USER = os.environ["DATABASE_USER"]
 # DATABASE_PASS = os.environ["DATABASE_PASS"]
 # DATABASE_NAME = os.environ["DATABASE_NAME"]
@@ -9,6 +11,8 @@ from sqlalchemy import Column, Float, ForeignKey, Integer, String
 # DATABASE_PATH = "postgresql://{}:{}@{}/{}".format(
 #     DATABASE_USER, DATABASE_PASS, DATABASE_HOST, DATABASE_NAME
 # )
+
+### If you want to deploy app to render/heroku/aws you will need this
 DATABASE_PATH = os.environ['DATABASE_URL']
 if DATABASE_PATH.startswith("postgres://"):
   DATABASE_PATH = DATABASE_PATH.replace("postgres://", "postgresql://", 1)

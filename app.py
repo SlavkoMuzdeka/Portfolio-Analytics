@@ -1,6 +1,10 @@
 from functools import wraps
 import os, json
-from flask import Flask, request, abort, jsonify
+from flask import (
+    Flask,
+    request,
+    abort, 
+    jsonify)
 from flask_cors import CORS
 from urllib.request import urlopen
 from jose import jwt
@@ -101,7 +105,7 @@ def verify_decode_jwt(token):
                 'code': 'invalid_claims',
                 'description': 'Incorrect claims. Please, check the audience and issuer.'
             }, 401)
-        except Exception as e:
+        except Exception:
             raise AuthError({
                 'code': 'invalid_header',
                 'description': 'Unable to parse authentication token.'
@@ -135,7 +139,7 @@ def requires_auth(permission=''):
             try:
                 payload = verify_decode_jwt(token)
                 check_permissions(permission, payload)
-            except Exception as e:
+            except Exception:
                 abort(401)
             return f(payload, *args, **kwargs)
 
@@ -143,7 +147,7 @@ def requires_auth(permission=''):
     return requires_auth_decorater
 
 
-@app.route('/portfolios', methods=['GET'])
+@app.route('/portfolios')
 @requires_auth('get:portfolios')
 def get_portfolios(jwt):
     portfolios = Portfolio.query.all()
@@ -157,7 +161,7 @@ def get_portfolios(jwt):
     }), 200
 
 
-@app.route('/asset_price_histories', methods=['GET'])
+@app.route('/asset_price_histories')
 @requires_auth('get:asset_price_histories')
 def get_asset_price_histories(jwt):
     asset_price_histories = AssetPriceHistory.query.all()
@@ -193,7 +197,7 @@ def create_portfolio(jwt):
             'success': True,
             'created': portfolio.id
         }), 200
-    except:
+    except Exception:
         abort(422)
 
 
@@ -229,7 +233,7 @@ def edit_asset_price_history(jwt, id):
             'success': True,
             'updated': asset_price_history.id
         }), 200
-    except:
+    except Exception:
         abort(422)
 
 
@@ -243,14 +247,14 @@ def delete_portfolio(jwt, id):
 
         try:
             portfolio.delete()
-        except:
+        except Exception:
             abort(403)
 
         return jsonify({
             'success': True,
             'deleted': id
         }), 200
-    except:
+    except Exception:
         abort(422)
 
 
